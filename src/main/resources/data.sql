@@ -1,0 +1,1 @@
+INSERT INTO notes (id, title, text) VALUES (1, 'Fuck Bitches', 'I would like to fuck all the bitches tonight')
