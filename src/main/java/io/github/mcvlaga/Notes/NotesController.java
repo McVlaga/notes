@@ -5,58 +5,53 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-public class NotesResource {
+public class NotesController {
 
     @Autowired
     private NotesRepository notesRepository;
 
     @GetMapping("/notes")
-    public List<Note> retrieveAllNotes() {
+    public List<Note> getAllNotes() {
         return notesRepository.findAll();
     }
 
     @GetMapping("/notes/{id}")
-    public Note retrieveNote(@PathVariable long id) {
-        Optional<Note> student = notesRepository.findById(id);
-
-        if (!student.isPresent())
-            throw new ResourceNotFoundException("id-" + id);
-
-        return student.get();
+    public Note getNoteById(@PathVariable(value = "id") Long noteId) {
+        return notesRepository.findById(noteId)
+                .orElseThrow(() -> new ResourceNotFoundException("id-" + noteId));
     }
 
     @DeleteMapping("/notes/{id}")
-    public void deleteNote(@PathVariable long id) {
-        notesRepository.deleteById(id);
+    public ResponseEntity<?> deleteNote(@PathVariable(value = "id") Long noteId) {
+        Note note = notesRepository.findById(noteId)
+                .orElseThrow(() -> new ResourceNotFoundException("id-" + noteId));
+
+        notesRepository.delete(note);
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/notes")
-    public ResponseEntity<Object> createNote(@RequestBody Note note) {
-        Note savedNote = notesRepository.save(note);
-
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedNote.getId()).toUri();
-
-        return ResponseEntity.created(location).build();
+    public Note createNote(@RequestBody Note note) {
+        return notesRepository.save(note);
     }
 
     @PutMapping("/notes/{id}")
-    public ResponseEntity<Object> updateNote(@RequestBody Note note, @PathVariable long id) {
+    public Note updateNote(@PathVariable(value = "id") Long noteId,
+                           @Valid @RequestBody Note noteDetails) {
 
-        Optional<Note> noteOptional = notesRepository.findById(id);
+        Note note = notesRepository.findById(noteId)
+                .orElseThrow(() -> new ResourceNotFoundException("id-" + noteId));
 
-        if (!noteOptional.isPresent())
-            return ResponseEntity.notFound().build();
+        note.setText(noteDetails.getText());
+        note.setTitle(noteDetails.getTitle());
 
-        note.setId(id);
-
-        notesRepository.save(note);
-
-        return ResponseEntity.noContent().build();
+        return notesRepository.save(note);
     }
 }

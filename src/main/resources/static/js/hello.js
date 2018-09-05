@@ -1,24 +1,81 @@
-$(document).ready(function () {
-    jQuery('.search').on('input', function() {
-        alert("huy");
-    });
+var app = angular.module("management", []);
+
+// Controller Part
+app.controller("controller", function ($scope, $http) {
 
 
-    $.ajax({
-        type: 'GET',
-        url: '/notes',
-        data: {
-            id: 'id',
-            title: 'title',
-            text: 'text'
-        },
-        dataType: 'json',
-        success: function (data) {
-            $.each(data, function (index, element) {
-                $( ".note-id" ).append(element.id);
-                $( ".note-title" ).append(element.title);
-                $( ".note-text" ).append(element.text);
-            });
-        }
-    });
+    $scope.notes = [];
+    $scope.noteForm = {
+        id: -1,
+        title: "",
+        text: ""
+    };
+
+    _refreshNotes();
+
+    $scope.submitNote = function () {
+
+        var method = "POST";
+        var url = '/notes';
+
+        $http({
+            method: method,
+            url: url,
+            data: angular.toJson($scope.noteForm),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(_success, _error);
+    };
+
+    $scope.createNote = function () {
+        _clearFormData();
+    }
+
+    $scope.deleteNote = function (note) {
+        $http({
+            method: 'DELETE',
+            url: '/notes/' + note.id
+        }).then(_success, _error);
+    };
+
+    $scope.editNote = function (note) {
+        $scope.noteForm.id = note.id;
+        $scope.noteForm.title = note.title;
+        $scope.noteForm.text = note.text;
+    };
+
+    function _refreshNotes() {
+        $http({
+            method: 'GET',
+            url: '/notes'
+        }).then(
+            function (res) {
+                $scope.notes = res.data;
+            },
+            function (res) {
+                console.log("Error: " + res.status + " : " + res.data);
+            }
+        );
+    }
+
+    function _success(res) {
+        _refreshNotes();
+        _clearFormData();
+    }
+
+    function _error(res) {
+        var data = res.data;
+        var status = res.status;
+        var header = res.header;
+        var config = res.config;
+        alert("Error: " + status + ":" + data);
+    }
+
+    // Clear the form
+    function _clearFormData() {
+        $scope.noteForm.id = -1;
+        $scope.noteForm.title = "";
+        $scope.noteForm.text = ""
+    };
 });

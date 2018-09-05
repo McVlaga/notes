@@ -1,16 +1,38 @@
 package io.github.mcvlaga.Notes;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "notes")
-public class Note {
+@EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties(value = {"createdOn", "updatedOn"}, allowGetters = true)
+public class Note implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
+
+    @Column(nullable = false)
     private String text;
+
+    @Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
+    private Date createdOn;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedOn;
 
     public Note() {
     }
@@ -43,6 +65,15 @@ public class Note {
     public void setText(String text) {
         this.text = text;
     }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public Date getUpdatedOn() {
+        return updatedOn;
+    }
+
 
     @Override
     public String toString() {
