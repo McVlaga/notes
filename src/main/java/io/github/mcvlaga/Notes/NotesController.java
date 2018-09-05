@@ -25,7 +25,7 @@ public class NotesResource {
         Optional<Note> student = notesRepository.findById(id);
 
         if (!student.isPresent())
-            throw new IllegalArgumentException("id-" + id);
+            throw new ResourceNotFoundException("id-" + id);
 
         return student.get();
     }
