@@ -1,13 +1,25 @@
 .content {
+    padding-top: 50px;
     max-width: 900px;
     margin: auto;
 }
 
+.navbar {
+    overflow: hidden;
+}
+
+.add-button {
+    float: right;
+}
+
+.search {
+    width: 300px;
+}
+
 .card-container {
     display: flex;
-    flex-wrap: wrap; /* Wrap after the items fill the row */
+    flex-wrap: wrap;
 
-    /* Safari specific rules */
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
 }

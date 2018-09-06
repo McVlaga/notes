@@ -1,6 +1,8 @@
 package io.github.mcvlaga.Notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -9,6 +11,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Indexed
 @Entity
 @Table(name = "notes")
 @EntityListeners(AuditingEntityListener.class)
@@ -19,8 +22,10 @@ public class Note implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Field
     private String title;
 
+    @Field
     @Column(nullable = false)
     private String text;
 

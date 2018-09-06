@@ -7,41 +7,70 @@
 
 <body class="content" ng-app="management" ng-controller="controller">
 
-<form ng-submit="submitNote()">
-    <div class="form-group">
-        <label for="titleInput">Title</label>
-        <input id="titleInput" type="text" class="form-control" placeholder="Enter the title..." ng-model="noteForm.title" />
-    </div>
-    <div class="form-group">
-        <label for="textTextArea">Text</label>
-        <textarea class="form-control" id="textTextArea" placeholder="Enter the text..." ng-model="noteForm.text"></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<div class="md-form navbar">
+    <input class="form-control search" ng-model="searchTerm" ng-change="onSearchChange(searchTerm)" type="text" placeholder="Search" aria-label="Search">
+    <button ng-click="createNote()" type="button" class="btn btn-primary add-button">Add note</button>
+</div>
 
 <div class="card-container">
-    <div ng-repeat="note in notes" class="card">
-        <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ note.title }}</h5>
-            <p class="card-text">{{ note.text }}</p>
-            <div class="buttons-container mt-auto ml-auto">
-                <button ng-click="editNote(note)" type="button" class="btn btn-warning">Edit</button>
-                <button ng-click="deleteNote(note)" type="button" class="btn btn-danger">Delete</button>
-            </div>
+
+    <div ng-if="showNewCard" class="card">
+        <div class="card-body">
+            <form ng-submit="submitNote()" class="d-flex flex-column">
+                <div class="form-group">
+                    <input id="newTitleInput" type="text" class="form-control" placeholder="Enter the title..."
+                           ng-model="noteForm.title"/>
+                </div>
+                <div class="form-group">
+                    <textarea rows="3" class="form-control" id="newTextTextArea" placeholder="Enter the text..."
+                              ng-model="noteForm.text"></textarea>
+                </div>
+                <input type="submit" class="btn btn-success mt-auto ml-auto" value="Save"/>
+            </form>
         </div>
         <div class="card-footer">
         </div>
     </div>
-</div>
 
-<button type="button">Add Note</button>
-<input class="search" type="text" placeholder="Search..">
+    <div ng-repeat="note in notes" class="card">
+        <form data-ng-show="editMode" ng-submit="updateNote(note)" class="card-body d-flex flex-column">
+            <div class="form-group">
+                <input id="titleInput" type="text" class="form-control" placeholder="Enter the title..."
+                       data-ng-model="note.title"/>
+            </div>
+            <div class="form-group">
+                    <textarea rows="3" class="form-control" id="textTextArea" placeholder="Enter the text..."
+                              data-ng-model="note.text"></textarea>
+            </div>
+            <div class="buttons-container ml-auto mt-auto">
+                <button data-ng-show="editMode" data-ng-click="editMode = false; cancel($index)" type="button"
+                        class="btn btn-danger">Cancel
+                </button>
+                <button data-ng-show="editMode" data-ng-click="editMode = false" type="submit"
+                        class="btn btn-success">Save
+                </button>
+            </div>
+        </form>
+        <div data-ng-hide="editMode" class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ note.title }}</h5>
+            <p class="card-text">{{ note.text }}</p>
+            <div class="buttons-container ml-auto mt-auto">
+                <button data-ng-click="editMode = true; editNote(note)" ng-show="allowEditMode" type="button" class="btn btn-warning">Edit
+                </button>
+                <button data-ng-click="deleteNote(note)" type="button" ng-show="allowEditMode" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+        <div class="card-footer">
+            <p class="card-text"><small class="text-muted">Last modified: {{note.updatedOn | date: 'dd/MM/yyyy HH:MM'}}</small></p>
+        </div>
+    </div>
+</div>
 </body>
 
 <script src="webjars/angularjs/1.7.2/angular.min.js"></script>
 <script src="webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-<script src="js/hello.js"></script>
+<script src="js/main.js"></script>
 <link href="webjars/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
 

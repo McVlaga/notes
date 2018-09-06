@@ -1,24 +1,31 @@
 package io.github.mcvlaga.Notes;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class NotesController {
+
+    @Autowired
+    private SearchNotesService searchNotesService;
 
     @Autowired
     private NotesRepository notesRepository;
 
     @GetMapping("/notes")
     public List<Note> getAllNotes() {
-        return notesRepository.findAll();
+        return notesRepository.findAll(new Sort(Sort.Direction.DESC, "updatedOn"));
+    }
+
+    @GetMapping("/notes/search={searchTerm}")
+    public List<Note> search(@PathVariable(value = "searchTerm") String searchTerm) {
+        return searchNotesService.searchNotes(searchTerm);
     }
 
     @GetMapping("/notes/{id}")
