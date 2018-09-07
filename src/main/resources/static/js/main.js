@@ -119,4 +119,8 @@ app.controller("controller", function ($scope, $http) {
         $scope.noteForm.title = "";
         $scope.noteForm.text = ""
     }
+
+    $scope.parseDate = function (date) {
+        return new Date(date);
+    }
 });

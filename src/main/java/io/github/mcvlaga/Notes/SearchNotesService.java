@@ -1,7 +1,10 @@
 package io.github.mcvlaga.Notes;
 
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +41,9 @@ public class SearchNotesService {
                 .matching("*" + searchTerm + "*")
                 .createQuery();
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(notesQuery, Note.class);
+        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(notesQuery, Note.class);
+
+        jpaQuery.setSort(new Sort(new SortField("updatedOn", SortField.Type.LONG, true)));
 
         // execute search
 

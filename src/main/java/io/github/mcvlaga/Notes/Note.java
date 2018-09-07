@@ -3,6 +3,7 @@ package io.github.mcvlaga.Notes;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.SortableField;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -37,6 +38,8 @@ public class Note implements Serializable {
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
+    @Field
+    @SortableField
     private Date updatedOn;
 
     public Note() {
